@@ -8608,6 +8608,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" ""
+			(at 46.99 161.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" ""
+			(at 46.99 161.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(instances
 			(project "a500-keyboard-controller"
 				(path "/2909bd21-a516-45c6-9b80-10444eb6ec9e"
@@ -8664,6 +8682,24 @@
 			)
 		)
 		(property "Description" "40pin microcontroller"
+			(at 215.9 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "PIC18F4520-I/P"
+			(at 215.9 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Microchip"
 			(at 215.9 71.12 0)
 			(effects
 				(font
@@ -8988,6 +9024,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" ""
+			(at 46.99 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" ""
+			(at 46.99 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(instances
 			(project "a500-keyboard-controller"
 				(path "/2909bd21-a516-45c6-9b80-10444eb6ec9e"
@@ -9258,6 +9312,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" "~"
+			(at 132.08 151.13 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" ""
+			(at 132.08 151.13 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "5"
 			(uuid "5ef133bf-16d2-47cd-8769-7db0b5be8363")
 		)
@@ -9337,6 +9409,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" "MF0207FTE52-22R"
+			(at 222.25 137.16 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Yageo"
+			(at 222.25 137.16 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "42c9afa3-480c-498e-889d-9f19c5239e63")
 		)
@@ -9399,6 +9489,24 @@
 			)
 		)
 		(property "Description" "Mounting Hole with connection"
+			(at 34.29 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" ""
+			(at 34.29 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" ""
 			(at 34.29 170.18 0)
 			(effects
 				(font
@@ -9483,6 +9591,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" "~"
+			(at 152.4 151.13 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" ""
+			(at 152.4 151.13 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "5"
 			(uuid "5ef133bf-16d2-47cd-8769-7db0b5be8364")
 		)
@@ -9557,6 +9683,24 @@
 			)
 		)
 		(property "Description" "Polarized capacitor"
+			(at 157.48 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "EEA-GA1C220H"
+			(at 157.48 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Panasonic"
 			(at 157.48 120.65 0)
 			(effects
 				(font
@@ -9692,6 +9836,24 @@
 			)
 		)
 		(property "Description" "Mounting Hole without connection"
+			(at 21.59 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" ""
+			(at 21.59 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" ""
 			(at 21.59 147.32 0)
 			(effects
 				(font
@@ -9895,6 +10057,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" "MF0207FTE52-47K"
+			(at 182.88 36.83 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Yageo"
+			(at 182.88 36.83 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "203cf420-466d-47c7-a747-c729069c878d")
 		)
@@ -9967,6 +10147,24 @@
 		)
 		(property "Sim.Pins" "1=K 2=A"
 			(at 96.52 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "~"
+			(at 96.52 151.13 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" ""
+			(at 96.52 151.13 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10190,6 +10388,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" "BC547C"
+			(at 129.54 165.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "~"
+			(at 129.54 165.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "3"
 			(uuid "80190b5b-e959-4332-ae3d-eabf17b2749f")
 		)
@@ -10328,6 +10544,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" "D102K20Y5PH63J5R"
+			(at 208.28 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Vishay"
+			(at 208.28 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "b5e353f7-82dc-437c-a127-3af19f7f6987")
 		)
@@ -10390,6 +10624,24 @@
 			)
 		)
 		(property "Description" "Mounting Hole with connection"
+			(at 46.99 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" ""
+			(at 46.99 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" ""
 			(at 46.99 170.18 0)
 			(effects
 				(font
@@ -10540,6 +10792,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" "~"
+			(at 106.68 151.13 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" ""
+			(at 106.68 151.13 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "5"
 			(uuid "2857d0b8-a92f-4d37-8d40-5b3c965544e6")
 		)
@@ -10613,6 +10883,24 @@
 		)
 		(property "Description" "Unpolarized capacitor"
 			(at 212.09 30.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "A104K15X7RF5UAA"
+			(at 212.09 30.48 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Vishay"
+			(at 212.09 30.48 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10699,6 +10987,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" "~"
+			(at 86.36 151.13 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" ""
+			(at 86.36 151.13 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "5"
 			(uuid "5ef133bf-16d2-47cd-8769-7db0b5be8366")
 		)
@@ -10772,6 +11078,24 @@
 		)
 		(property "Description" "Unpolarized capacitor"
 			(at 227.33 30.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "A104K15X7RF5UAA"
+			(at 227.33 30.48 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Vishay"
+			(at 227.33 30.48 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10906,6 +11230,24 @@
 			)
 		)
 		(property "Description" ""
+			(at 67.31 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "39-53-2315"
+			(at 67.31 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Molex"
 			(at 67.31 67.31 0)
 			(effects
 				(font
@@ -11136,6 +11478,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" ""
+			(at 21.59 162.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" ""
+			(at 21.59 162.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(instances
 			(project "a500-keyboard-controller"
 				(path "/2909bd21-a516-45c6-9b80-10444eb6ec9e"
@@ -11330,6 +11690,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" "MF0207FTE52-47K"
+			(at 157.48 36.83 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Yageo"
+			(at 157.48 36.83 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "2764a81e-8a29-426a-aca4-1be00d50e311")
 		)
@@ -11392,6 +11770,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 172.72 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "MF0207FTE52-47K"
+			(at 172.72 36.83 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Yageo"
+			(at 172.72 36.83 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11531,6 +11927,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" "MF0207FTE52-22R"
+			(at 222.25 129.54 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Yageo"
+			(at 222.25 129.54 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "7dbcc478-75d9-458e-8c80-ad46af9dd69e")
 		)
@@ -11601,6 +12015,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" ""
+			(at 46.99 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" ""
+			(at 46.99 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(instances
 			(project ""
 				(path "/2909bd21-a516-45c6-9b80-10444eb6ec9e"
@@ -11655,6 +12087,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 132.08 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "MF0207FTE52-22R"
+			(at 132.08 138.43 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Yageo"
+			(at 132.08 138.43 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11732,6 +12182,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" ""
+			(at 59.69 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" ""
+			(at 59.69 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "bd733c9d-cd60-4629-b34a-60eaf8c3a6f5")
 		)
@@ -11796,6 +12264,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" "MF0207FTE52-270R"
+			(at 86.36 138.43 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Yageo"
+			(at 86.36 138.43 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "e693d753-3005-4341-a922-dad3be5386e4")
 		)
@@ -11816,7 +12302,7 @@
 		(at 266.7 58.42 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "d5aea67d-7f8c-40b8-922c-147641018dec")
@@ -11857,6 +12343,24 @@
 			)
 		)
 		(property "Description" "test point"
+			(at 266.7 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" ""
+			(at 266.7 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" ""
 			(at 266.7 58.42 0)
 			(effects
 				(font
@@ -11922,6 +12426,24 @@
 		)
 		(property "Description" "Resistor"
 			(at 121.92 171.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "MF0207FTE52-470R"
+			(at 121.92 171.45 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Yageo"
+			(at 121.92 171.45 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11998,6 +12520,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" "MF0207FTE52-47K"
+			(at 177.8 36.83 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Yageo"
+			(at 177.8 36.83 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "bd657576-c95a-48b5-b3fe-64abae8817f8")
 		)
@@ -12019,7 +12559,7 @@
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -12059,6 +12599,24 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 248.92 142.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" ""
+			(at 248.92 142.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" ""
 			(at 248.92 142.24 0)
 			(effects
 				(font
@@ -12212,6 +12770,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" "MF0207FTE52-1K8"
+			(at 121.92 151.13 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Yageo"
+			(at 121.92 151.13 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "06dfbbc3-b531-4526-8c27-55fef1d96a18")
 		)
@@ -12299,7 +12875,7 @@
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -12339,6 +12915,24 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x10, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 185.42 142.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" ""
+			(at 185.42 142.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" ""
 			(at 185.42 142.24 0)
 			(effects
 				(font
@@ -12438,6 +13032,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" "MF0207FTE52-220R"
+			(at 100.33 45.72 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Yageo"
+			(at 100.33 45.72 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "939289cc-16a8-4a97-93af-9f2ba1787604")
 		)
@@ -12507,6 +13119,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" "MF0207FTE52-47K"
+			(at 167.64 36.83 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Yageo"
+			(at 167.64 36.83 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "3357ec8a-7152-484c-8ce4-b19d69f318c8")
 		)
@@ -12569,6 +13199,24 @@
 			)
 		)
 		(property "Description" "Mounting Hole without connection"
+			(at 21.59 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" ""
+			(at 21.59 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" ""
 			(at 21.59 154.94 0)
 			(effects
 				(font
@@ -12650,6 +13298,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" "~"
+			(at 142.24 151.13 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" ""
+			(at 142.24 151.13 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "5"
 			(uuid "5ef133bf-16d2-47cd-8769-7db0b5be8367")
 		)
@@ -12724,6 +13390,24 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
+			(at 200.66 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "D102K20Y5PH63J5R"
+			(at 200.66 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Vishay"
 			(at 200.66 124.46 0)
 			(effects
 				(font
@@ -12933,6 +13617,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" "MF0207FTE52-47K"
+			(at 162.56 36.83 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Yageo"
+			(at 162.56 36.83 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "150dab6b-f097-4c5b-b801-88e96332cfbb")
 		)
@@ -12994,6 +13696,24 @@
 			)
 		)
 		(property "Description" "Mounting Hole with connection"
+			(at 21.59 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" ""
+			(at 21.59 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" ""
 			(at 21.59 170.18 0)
 			(effects
 				(font
