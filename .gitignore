@@ -1,3 +1,6 @@
 /kicad/a500-keyboard-controller-backups/
 /kicad/production/
 /kicad/*.bak
+/firmware.X/dist/
+/firmware.X/build/
+/firmware.X/debug/
