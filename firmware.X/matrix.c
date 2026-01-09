@@ -100,10 +100,6 @@ bool matrix_read(uint8_t *result)
 {
     uint8_t row, columns;
     uint8_t possible_ghost_columns = 0;
-    uint8_t timer;
-        
-    // set timer
-    timer = timer_get();
     
     // scan keyboard matrix
     for(row = 0; row < MATRIX_N_ROWS-1; row++)
@@ -112,7 +108,10 @@ bool matrix_read(uint8_t *result)
         matrix_select_row(row);
         
         // allow 160us for row to settle
-        timer_until_us(timer,160);
+        us_timer_set(160);
+        us_timer_wait();
+        // scan a row every 600us
+        us_timer_set(440);
 
         // read pressed keys for this row
         columns = matrix_read_columns();   
@@ -134,9 +133,8 @@ bool matrix_read(uint8_t *result)
         // store result for this row
         result[row] = columns;
         
-        // scan a row every 600us
-        timer_until_us(timer,600);
-        timer = timer_add_us(timer, 600);
+        // wait for timer to expire before scanning next row     
+        us_timer_wait();
     }
     
     // scan special keys and put them in the dummy row

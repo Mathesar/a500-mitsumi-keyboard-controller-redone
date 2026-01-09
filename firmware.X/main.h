@@ -53,6 +53,10 @@
 #define RIGHT_SHIFT     PORTBbits.RB5
 #define RIGHT_AMIGA     PORTAbits.RA4
 
+// other IO
+#define DEBUG           LATCbits.LATC6
+
+
 // key state structure
 typedef struct
 {
@@ -60,12 +64,9 @@ typedef struct
     uint8_t debounce_timer;    
 } key_state_t;
 
-// timer macro's
-#define timer_us                    4
-#define timer_get()                 (TMR0L)
-#define timer_diff(timer)           (timer_get()-(uint8_t)timer)
-#define timer_until_us(timer,us)    {while(timer_diff((timer))<(((us)/timer_us)+1));}
-#define timer_add_us(timer,us)      (timer+(((us)/timer_us)+1))            
+// micro-second timer macro's
+#define us_timer_set(us)            {TMR1 = (65536-(us));PIR1bits.TMR1IF = 0;}
+#define us_timer_wait()             {while(!PIR1bits.TMR1IF);}
 
 #endif	/* MAIN_H */
 

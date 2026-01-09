@@ -79,6 +79,7 @@
 #include <xc.h>
 #include "main.h"
 #include "matrix.h"
+#include <stdio.h>
 
 key_state_t key_state;
 uint8_t key_matrix[15];
@@ -121,10 +122,41 @@ void update_key_states(void)
     }
 }
 
+#define DBG_PERIOD_US 833
+#define DBG_BIT_OUT(bit)    {   us_timer_set(DBG_PERIOD_US);        \
+                                if(!(bit)){DEBUG = 0;}              \
+                                if(bit){DEBUG = 1;}                 \
+                                us_timer_wait();                    };
+
+// 1200 baud, bit-banged serial debug output
+void debug_out(uint8_t data)
+{
+    // startbit
+    DBG_BIT_OUT(0);    
+    // data
+    DBG_BIT_OUT(data&0x01);
+    DBG_BIT_OUT(data&0x02);
+    DBG_BIT_OUT(data&0x04);
+    DBG_BIT_OUT(data&0x08);
+    DBG_BIT_OUT(data&0x10);
+    DBG_BIT_OUT(data&0x20);
+    DBG_BIT_OUT(data&0x40);
+    DBG_BIT_OUT(data&0x80);
+    // stopbit
+    DBG_BIT_OUT(1);    
+}
+
+void putch(char c)
+{
+    debug_out(c);
+}
+
 
 
 void init(void)
 {
+    OSCCONbits.IRCF = 0b111; // 8MHz
+    
     // disable comparators
     CMCONbits.CM = 0b111;
         
@@ -141,8 +173,8 @@ void init(void)
     INTCON2bits.RBPU = 0; // enable pullups
     
     // configure portc 
-    LATC = 0x08;
-    TRISC = 0xf7; // C3 is CAPS LED
+    LATC = 0x48;
+    TRISC = 0xb7; // C3 is CAPS LED, C6 is debug/TXD
     
     // configure portd
     LATD = 0x00;
@@ -152,9 +184,8 @@ void init(void)
     LATE = 0x00;
     TRISE = 0x07;
     
-    //configure timer0 in 8bit mode
-    //4 micro-second per count
-    T0CON = 0b11010010;    
+    //configure timer1 in 16bit mode, 1 micro-second per count
+    T1CON = 0b10010001;
 }
 
 
@@ -170,9 +201,13 @@ void main(void) {
 
         // update key sxtates
         update_key_states();
+        
+        
+        //putch(0xaa);
+        printf("hello world: 0x%02x\n", OSCCON);
     }
 
-    // We should never come here
+    // We should never, ever come here
     return;
 }
 
