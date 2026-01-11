@@ -21,13 +21,20 @@
 #ifndef MAIN_H
 #define	MAIN_H
 
+// set below define to disable debugging
+//#define NDEBUG
+
+#ifndef NDEBUG
+#include <stdio.h>
+#endif
+
 //total number of rows in matrix scan result
 //last row is a "dummy" row that hold the special keys
 #define MATRIX_N_ROWS   16
 //total number of columns in scan result
 #define MATRIX_N_COLS   7
 
-// keyboard matrix IO definitions
+// keyboard matrix row IO definitions
 #define MATRIX_Y0       TRISCbits.TRISC5
 #define MATRIX_Y1       TRISCbits.TRISC2
 #define MATRIX_Y2       TRISCbits.TRISC7
@@ -44,7 +51,7 @@
 #define MATRIX_Y13      TRISEbits.TRISE0
 #define MATRIX_Y14      TRISAbits.TRISA5
 
-// special keys
+// special key IO definitions
 #define LEFT_AMIGA      PORTBbits.RB0
 #define LEFT_ALT        PORTBbits.RB1
 #define LEFT_SHIFT      PORTBbits.RB2
@@ -55,7 +62,10 @@
 
 // other IO
 #define DEBUG           LATCbits.LATC6
-
+#define KDAT_WRITE      TRISDbits.TRISD0
+#define KDAT_READ       PORTDbits.RD0
+#define KCLK            TRISDbits.TRISD1
+#define CAPS_LOCK       LATCbits.LATC3
 
 // key state structure
 typedef struct
@@ -65,7 +75,8 @@ typedef struct
 } key_state_t;
 
 // micro-second timer macro's
-#define us_timer_set(us)            {TMR1 = (65536-(us));PIR1bits.TMR1IF = 0;}
+#define us_timer_set(us)            {TMR1 = (uint16_t)(65536UL-(us));PIR1bits.TMR1IF = 0;}
+#define us_timer_expired()          (PIR1bits.TMR1IF)
 #define us_timer_wait()             {while(!PIR1bits.TMR1IF);}
 
 #endif	/* MAIN_H */

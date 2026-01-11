@@ -7,6 +7,7 @@
       <itemPath>C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/PIC18Fxxxx_DFP/1.7.171/xc8/pic/include/proc/pic18f4520.h</itemPath>
       <itemPath>main.h</itemPath>
       <itemPath>matrix.h</itemPath>
+      <itemPath>keyboard.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -22,6 +23,7 @@
                    projectFiles="true">
       <itemPath>main.c</itemPath>
       <itemPath>matrix.c</itemPath>
+      <itemPath>keyboard.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

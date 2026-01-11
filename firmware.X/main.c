@@ -79,48 +79,61 @@
 #include <xc.h>
 #include "main.h"
 #include "matrix.h"
-#include <stdio.h>
+#include "keyboard.h"
 
 key_state_t key_state;
 uint8_t key_matrix[15];
 
 void update_key_states(void)
 {
+    //disable debounce timer for now
+    key_state.debounce_timer = 0;
+        
     if(key_state.debounce_timer == 0)
     {
         // debounce timer expired, check for depressed keys        
         for(uint8_t row=0; row<MATRIX_N_ROWS; row++)
         {
-            for(uint8_t column=1; column<(1<<MATRIX_N_COLS); column<<=1)
+            uint8_t column_mask = 1;
+            for(uint8_t column=0; column<MATRIX_N_COLS; column++)
             {              
-                uint8_t mask = column & (~key_matrix[row]);            
+                uint8_t mask = column_mask & (~key_matrix[row]);            
                 if(mask & key_state.key_current_states[row])
                 {
                     //send message to computer here
+                    keyboard_send_key_code(row, column, true);
                     
                     //key was depressed, update state as it has been handled
-                    key_matrix[row] &= ~mask;                   
-                }                   
+                    key_state.key_current_states[row] &= ~mask;                   
+                }     
+                
+                column_mask <<= 1;
             }
         }
         
         // check for pressed keys
         for(uint8_t row=0; row<MATRIX_N_ROWS; row++)
         {
-            for(uint8_t column=1; column<(1<<MATRIX_N_COLS); column<<=1)
+            uint8_t column_mask = 1;
+            for(uint8_t column=0; column<MATRIX_N_COLS; column++)
             {              
-                uint8_t mask = column & key_matrix[row];                
+                uint8_t mask = column_mask & key_matrix[row];                
                 if(mask & ~key_state.key_current_states[row])
                 {
                     //send message to computer here
+                    keyboard_send_key_code(row, column, false);
                     
                     //key was pressed, update state as it has been handled
-                    key_matrix[row] |= mask;                   
-                }                   
+                    key_state.key_current_states[row] |= mask;                   
+                }   
+
+                column_mask <<= 1;
             }
         }        
     }
 }
+
+#ifndef NDEBUG
 
 #define DBG_PERIOD_US 833
 #define DBG_BIT_OUT(bit)    {   us_timer_set(DBG_PERIOD_US);        \
@@ -151,6 +164,7 @@ void putch(char c)
     debug_out(c);
 }
 
+#endif
 
 
 void init(void)
@@ -188,23 +202,24 @@ void init(void)
     T1CON = 0b10010001;
 }
 
-
-
 void main(void) {
     
+    // initialize system
     init();
     
     while(1)
     {
         // read matrix
-        matrix_read(key_matrix);
-
-        // update key sxtates
-        update_key_states();
-        
-        
-        //putch(0xaa);
-        printf("hello world: 0x%02x\n", OSCCON);
+        if(!matrix_read(key_matrix))
+        {
+            // ghosting detected
+            printf("ghost\n");
+        }
+        else
+        {
+            // update key states
+            update_key_states();
+        }  
     }
 
     // We should never, ever come here

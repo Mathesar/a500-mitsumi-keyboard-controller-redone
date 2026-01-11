@@ -73,9 +73,9 @@ void matrix_deselect_row(uint8_t row)
 uint8_t matrix_read_columns(void)
 {
     uint8_t columns = (PORTA & 0x0f) ^ 0x0f;
-    if(TRISB6 == 0)
+    if(PORTBbits.RB6 == 0)
         columns |= 0x10;
-    if(TRISB7 == 0)
+    if(PORTBbits.RB7 == 0)
         columns |= 0x20;
          
     return columns;
