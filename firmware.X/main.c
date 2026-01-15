@@ -81,61 +81,13 @@
 #include "matrix.h"
 #include "keyboard.h"
 
-key_state_t key_state;
-uint8_t key_matrix[15];
-
-void update_key_states(void)
-{
-    //disable debounce timer for now
-    key_state.debounce_timer = 0;
-        
-    if(key_state.debounce_timer == 0)
-    {
-        // debounce timer expired, check for depressed keys        
-        for(uint8_t row=0; row<MATRIX_N_ROWS; row++)
-        {
-            uint8_t column_mask = 1;
-            for(uint8_t column=0; column<MATRIX_N_COLS; column++)
-            {              
-                uint8_t mask = column_mask & (~key_matrix[row]);            
-                if(mask & key_state.key_current_states[row])
-                {
-                    //send message to computer here
-                    keyboard_send_key_code(row, column, true);
-                    
-                    //key was depressed, update state as it has been handled
-                    key_state.key_current_states[row] &= ~mask;                   
-                }     
-                
-                column_mask <<= 1;
-            }
-        }
-        
-        // check for pressed keys
-        for(uint8_t row=0; row<MATRIX_N_ROWS; row++)
-        {
-            uint8_t column_mask = 1;
-            for(uint8_t column=0; column<MATRIX_N_COLS; column++)
-            {              
-                uint8_t mask = column_mask & key_matrix[row];                
-                if(mask & ~key_state.key_current_states[row])
-                {
-                    //send message to computer here
-                    keyboard_send_key_code(row, column, false);
-                    
-                    //key was pressed, update state as it has been handled
-                    key_state.key_current_states[row] |= mask;                   
-                }   
-
-                column_mask <<= 1;
-            }
-        }        
-    }
-}
+#define MATRIX_SCAN_INTERVAL_MS     11
+#define RESET_DEBOUNCE_TIME_MS      50
+#define RESET_PULSE_DURATION_MS     500
 
 #ifndef NDEBUG
 
-#define DBG_PERIOD_US 833
+#define DBG_PERIOD_US 832   // ~1200 baud
 #define DBG_BIT_OUT(bit)    {   us_timer_set(DBG_PERIOD_US);        \
                                 if(!(bit)){DEBUG = 0;}              \
                                 if(bit){DEBUG = 1;}                 \
@@ -166,10 +118,11 @@ void putch(char c)
 
 #endif
 
-
+// initialize system
 void init(void)
 {
-    OSCCONbits.IRCF = 0b111; // 8MHz
+    // 8MHz
+    OSCCONbits.IRCF = 0b111; 
     
     // disable comparators
     CMCONbits.CM = 0b111;
@@ -187,7 +140,7 @@ void init(void)
     INTCON2bits.RBPU = 0; // enable pullups
     
     // configure portc 
-    LATC = 0x48;
+    LATC = 0x40;  // debug/TXD high, CAPS LED on  
     TRISC = 0xb7; // C3 is CAPS LED, C6 is debug/TXD
     
     // configure portd
@@ -198,33 +151,167 @@ void init(void)
     LATE = 0x00;
     TRISE = 0x07;
     
-    //configure timer1 in 16bit mode, 1 micro-second per count
-    T1CON = 0b10010001;
+    // configure timer0 in 16bit mode, 128 micro-second per count
+    T0CON = 0b10000111;
+    
+    //configure timer1 in 16bit mode, 4 micro-second per count
+    T1CON = 0b10110001;
 }
 
-void main(void) {
+void main(void) 
+{
+    timer_t matrix_timer;
+    timer_t reset_debounce_timer;
+    uint8_t key_code;
+    uint8_t  n_events = 0; 
+    
+    enum state_t
+    {
+        POWERUP = 0,
+        POWERUP_SYNCED,
+        START_SCAN,
+        SCAN,
+        SEND,
+        OUT_OF_SYNC
+    };
+    
+    enum state_t state = POWERUP;
     
     // initialize system
     init();
     
-    while(1)
+#ifndef NDEBUG
+    printf("A500 Mitsumi redone\n");
+#endif
+                
+    // main loop
+    while(1)       
     {
-        // read matrix
-        if(!matrix_read(key_matrix))
+        // check for ctrl-amiga-amiga reset outside main state machine
+        if( (!CTRL) && (!LEFT_AMIGA) && (!RIGHT_AMIGA) )
         {
-            // ghosting detected
-            printf("ghost\n");
+            if( (timer_get() - reset_debounce_timer) > ms_to_timer(RESET_DEBOUNCE_TIME_MS) )
+            {
+                // assert reset to host computer                
+                HOST_RESET = 0;
+                
+                // wait for reset pulse timer
+                timer_t reset_timer = timer_get();
+                while( (timer_get() - reset_timer) < ms_to_timer(RESET_PULSE_DURATION_MS) );
+                               
+                // now wait for user to release ctrl-amiga-amiga
+                // and then reset ourself as well
+                if( (CTRL) && (LEFT_AMIGA) && (RIGHT_AMIGA) )
+                    RESET();
+            }               
         }
         else
         {
-            // update key states
-            update_key_states();
-        }  
+            reset_debounce_timer = timer_get();
+        }
+                
+        // main state machine
+        switch(state)
+        {
+            // We come here after a reset
+            case POWERUP:
+                // send sync pulse and wait for host to respond      
+                if(keyboard_synchronize())
+                    state = POWERUP_SYNCED;
+                
+                break;
+                
+            // power-up synchronization achieved
+            case POWERUP_SYNCED:
+                // send "ïnitiate power-up key stream" code
+                if(!keyboard_send(0xFD))
+                    state = POWERUP;
+                 
+                //send "terminate key stream" code
+                if(!keyboard_send(0xFE))
+                    state = POWERUP;
+                
+                //turn off CAPS LED
+                CAPS_LOCK = 1;
+                
+                // we are now ready to scan the keyboard matrix
+                state = START_SCAN;
+                                
+                break;  
+
+            // start scanning
+            case START_SCAN:
+                // init scan timer
+                matrix_timer = timer_get();
+                
+                if(n_events)
+                    state = SEND;
+                else
+                    state = SCAN;
+                
+                break;
+                
+            // scan matrix
+            case SCAN:
+                if( (timer_get() - matrix_timer) > ms_to_timer(MATRIX_SCAN_INTERVAL_MS) )
+                {
+                    matrix_timer = timer_get();
+                    
+                    // scan keyboard
+                    if(matrix_scan())
+                    {
+                        // extract key codes
+                        n_events = matrix_decode();
+                        if(n_events)
+                        {
+                            state = SEND;
+                        }
+                    }                               
+                }                  
+                break;
+                
+            // send received key codes to host    
+            case SEND:                             
+                
+                if(n_events)
+                {
+                    key_code = key_codes[n_events--];
+                    
+                    if(!keyboard_send(key_code))
+                        state = OUT_OF_SYNC;    
+                }     
+                else
+                {
+                    // all key events sent
+                    state = SCAN;
+                }
+                    
+                break;
+
+            // we are out of sync with the host computer               
+            case OUT_OF_SYNC:                
+                // send sync pulse and wait for host to respond                
+                if(keyboard_synchronize())
+                {
+                    // we are synchronized again, send "lost sync" code
+                    if(keyboard_send(0xF9))
+                    {
+                        // resend garbled code
+                        if(keyboard_send(key_code))
+                        {
+                            state = SEND;
+                        }
+                    }                     
+                }               
+                break;
+                
+            // We should never, ever come here.
+            default:    
+                RESET();                
+                break;
+         }     
     }
 
-    // We should never, ever come here
-    return;
+    // And here too.
+    RESET();
 }
-
-
-

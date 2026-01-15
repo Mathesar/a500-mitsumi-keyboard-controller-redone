@@ -24,6 +24,20 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-bool matrix_read(uint8_t *result);
+// total number of rows in matrix scan result
+// last row is a "dummy" row that hold the special keys
+#define MATRIX_N_ROWS   16
+
+// total number of columns in scan result
+#define MATRIX_N_COLS   7
+
+// max number of codes that can be detected in a single matrix scan
+#define MATRIX_N_EVENTS 32
+
+// decoded key events are stored here
+extern uint8_t key_codes[MATRIX_N_EVENTS];
+
+bool matrix_scan(void);
+uint8_t matrix_decode(void);
 
 #endif	/* MATRIX_H */

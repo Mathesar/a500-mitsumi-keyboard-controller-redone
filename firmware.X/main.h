@@ -28,12 +28,6 @@
 #include <stdio.h>
 #endif
 
-//total number of rows in matrix scan result
-//last row is a "dummy" row that hold the special keys
-#define MATRIX_N_ROWS   16
-//total number of columns in scan result
-#define MATRIX_N_COLS   7
-
 // keyboard matrix row IO definitions
 #define MATRIX_Y0       TRISCbits.TRISC5
 #define MATRIX_Y1       TRISCbits.TRISC2
@@ -66,18 +60,16 @@
 #define KDAT_READ       PORTDbits.RD0
 #define KCLK            TRISDbits.TRISD1
 #define CAPS_LOCK       LATCbits.LATC3
+#define HOST_RESET      TRISCbits.TRISC4
 
-// key state structure
-typedef struct
-{
-    uint8_t key_current_states[MATRIX_N_ROWS];
-    uint8_t debounce_timer;    
-} key_state_t;
-
-// micro-second timer macro's
-#define us_timer_set(us)            {TMR1 = (uint16_t)(65536UL-(us));PIR1bits.TMR1IF = 0;}
+// micro-second timer macro's, resolution=4us, max=255ms
+#define us_timer_set(us)            {TMR1 = (uint16_t)(65536UL-(((us)+3UL)/4UL));PIR1bits.TMR1IF = 0;}
 #define us_timer_expired()          (PIR1bits.TMR1IF)
 #define us_timer_wait()             {while(!PIR1bits.TMR1IF);}
 
-#endif	/* MAIN_H */
+// shared timer macro's
+#define timer_get()                 (TMR0)
+#define ms_to_timer(ms)             (((uint32_t)ms*1000UL)/128UL)
+typedef uint16_t timer_t;
 
+#endif	/* MAIN_H */

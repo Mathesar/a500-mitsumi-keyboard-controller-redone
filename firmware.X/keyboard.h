@@ -21,7 +21,8 @@
 #ifndef KEYBOARD_H
 #define	KEYBOARD_H
 
-void keyboard_send_key_code(uint8_t row, uint8_t column, bool released);
+bool keyboard_send(uint8_t code);
+bool keyboard_synchronize(void);
 
 #endif	/* KEYBOARD_H */
 

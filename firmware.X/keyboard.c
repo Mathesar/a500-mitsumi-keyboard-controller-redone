@@ -22,28 +22,7 @@
 #include "main.h"
 #include <stdbool.h>
 
-#define KEYBOARD_HANDSHAKE_TIMEOUT_MS   50UL
-#define KEYBOARD_SYNC_RETRIES           10
-
-const uint8_t key_codes[MATRIX_N_ROWS][MATRIX_N_COLS] = 
-{
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
-};
+#define KEYBOARD_HANDSHAKE_TIMEOUT_MS   143UL
 
 // wait for host computer handshake
 bool keyboard_wait_handshake(void)
@@ -59,27 +38,25 @@ bool keyboard_wait_handshake(void)
 
 // synchronize with host computer
 bool keyboard_synchronize(void)
-{
-    for(uint8_t retries = 0; retries<KEYBOARD_SYNC_RETRIES; retries++)
-    {
-        // release KDAT
-        KDAT_WRITE = 1;    
-        us_timer_set(20);
-        us_timer_wait();
+{       
+    // assert KDAT
+    KDAT_WRITE = 0;    
+    us_timer_set(20);
+    us_timer_wait();
 
-        // send clk pulse
-        us_timer_set(20);
-        KCLK = 0;
-        us_timer_wait();
-        KCLK = 1;
+    // send clk pulse
+    us_timer_set(20);
+    KCLK = 0;
+    us_timer_wait();
+    us_timer_set(20);
+    KCLK = 1;
 
-        //wait for sync
-        if(keyboard_wait_handshake())
-            return true; // succes! We are synchronized
-    }
-    
-    // synchronization failed
-    return false;
+    // release KDAT
+    us_timer_wait();
+    KDAT_WRITE = 1;
+
+    // wait for sync
+    return keyboard_wait_handshake(); 
 }
 
 // send a byte to the host computer
@@ -133,20 +110,4 @@ bool keyboard_send(uint8_t code)
     
     // wait for sync pulse
     return keyboard_wait_handshake(); 
-}
-
-// send a key hit/released code to the host computer
-void keyboard_send_key_code(uint8_t row, uint8_t column, bool released)
-{
-#ifndef NDEBUG
-    if(released)
-        printf("[%2d,%d] released\n", row, column);
-    else
-        printf("[%2d,%d] hit\n", row, column);
-#endif
-       
-    // look up code here
-        
-    // and send keycode
-    keyboard_send(row);   
 }
