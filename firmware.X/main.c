@@ -272,11 +272,9 @@ void main(void)
                 
             // send received key codes to host    
             case SEND:                             
-                
                 if(n_events)
                 {
-                    key_code = key_codes[n_events--];
-                    
+                    key_code = key_codes[--n_events];
                     if(!keyboard_send(key_code))
                         state = OUT_OF_SYNC;    
                 }     

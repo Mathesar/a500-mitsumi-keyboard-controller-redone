@@ -31,6 +31,7 @@ typedef struct
 key_state_t key_state;
 uint8_t matrix[MATRIX_N_ROWS];
 uint8_t key_codes[MATRIX_N_EVENTS];
+bool caps_lock = false;
 
 // matrix to key code mapping
 const uint8_t matrix_to_code_map[MATRIX_N_ROWS][MATRIX_N_COLS] = 
@@ -51,8 +52,11 @@ const uint8_t matrix_to_code_map[MATRIX_N_ROWS][MATRIX_N_COLS] =
     { 0x11, 0x32, 0x02, 0x50, 0x3f, 0x21, 0x00 },   // row 12
     { 0x10, 0x31, 0x01, 0x5a, 0x5e, 0x20, 0x00 },   // row 13
     { 0x42, 0x30, 0x00, 0x45, 0x5d, 0x62, 0x00 },   // row 14
-    { 0x66, 0x64, 0x60, 0x63, 0x64, 0x61, 0x67 }    // row 15 (extra)
+    { 0x66, 0x64, 0x60, 0x63, 0x65, 0x61, 0x67 }    // row 15 (extra)
 };
+
+// CAPS-LOCK key code
+#define CAPS_LOCK_CODE  0x62
 
 //select a row by pulling the output low
 void matrix_select_row(uint8_t row)
@@ -123,6 +127,26 @@ uint8_t matrix_count_bits_set(uint8_t value)
     }    
     
     return bits_set;
+}
+
+// Toggle CAPS-LOCK on or off
+// returns correct key code
+uint8_t matrix_handle_caps_lock(void)
+{
+    if(caps_lock)
+    {
+        // turn caps lock off
+        caps_lock = false;
+        CAPS_LOCK = 1;
+        return CAPS_LOCK_CODE | 0x80;
+    }
+    else
+    {
+        // turn caps lock on
+        caps_lock = true;
+        CAPS_LOCK = 0;
+        return CAPS_LOCK_CODE;
+    }     
 }
 
 //Scan the matrix and place the scanned matrix in global <matrix>.
@@ -202,31 +226,43 @@ uint8_t matrix_decode(void)
     // go through all rows
     for(uint8_t row=0; row<MATRIX_N_ROWS; row++)
     {
+        // check for pressed or released events
         uint8_t pressed  =  matrix[row] & ~key_state.key_current_states[row];
         uint8_t released = ~matrix[row] &  key_state.key_current_states[row];
+        
+        // update states
+        key_state.key_current_states[row] ^= (pressed|released);
 
         // go through all columns   
         uint8_t column_mask = 1;
         for(uint8_t column=0; column<MATRIX_N_COLS; column++)
         {              
-            if(pressed&column_mask)
+            uint8_t code = matrix_to_code_map[row][column];
+            
+            if(code == CAPS_LOCK_CODE)
+            {
+                // CAPS-LOCK is special, toggles on "pressed" events
+                if(pressed&column_mask)
+                {
+                    key_codes[n++] = matrix_handle_caps_lock();
+                }               
+            }
+            else if(pressed&column_mask)
             {            
-                key_codes[n++] = matrix_to_code_map[row][column];
-                key_state.key_current_states[row] |= column_mask;
+                key_codes[n++] = code;
 #ifndef NDEBUG
                 printf("[%u,%u] DOWN, CODE:0x%02X\n", row, column, matrix_to_code_map[row][column]);
 #endif
             }
-
-            if(released&column_mask)
+            else if(released&column_mask)
             {            
-                key_codes[n++] = matrix_to_code_map[row][column] & 0x80; 
-                key_state.key_current_states[row] &= ~column_mask;
+                key_codes[n++] = code | 0x80;     
 #ifndef NDEBUG
                 printf("[%u,%u] UP\n", row, column);
 #endif
             }
             
+            // next column
             column_mask <<= 1;
             
             // check for buffer full

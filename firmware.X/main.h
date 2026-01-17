@@ -22,7 +22,7 @@
 #define	MAIN_H
 
 // set below define to disable debugging
-//#define NDEBUG
+#define NDEBUG
 
 #ifndef NDEBUG
 #include <stdio.h>

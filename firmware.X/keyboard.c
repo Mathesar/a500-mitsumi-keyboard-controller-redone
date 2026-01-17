@@ -28,11 +28,21 @@
 bool keyboard_wait_handshake(void)
 {
     us_timer_set(KEYBOARD_HANDSHAKE_TIMEOUT_MS*1000UL);    
+
+    // check for KDAT released
+    while(!KDAT_READ)
+    {
+        if(us_timer_expired())
+            return false;   // KDAT is stuck low
+    }
+    
+    // now check for handshake pulse
     while(KDAT_READ)
     {
         if(us_timer_expired())
             return false;
     }
+    
     return true;    
 }
 
@@ -94,7 +104,7 @@ bool keyboard_send(uint8_t code)
             KDAT_WRITE = 1;
         if(!(tx_code&0x80))
             KDAT_WRITE = 0;
-        code <<= 1;
+        tx_code <<= 1;
         us_timer_wait();
         us_timer_set(20);
         KCLK = 0;
