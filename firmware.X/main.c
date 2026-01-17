@@ -195,14 +195,18 @@ void main(void)
                 // assert reset to host computer                
                 HOST_RESET = 0;
                 
+                // turn on CAPS-LOCK LED
+                CAPS_LOCK = 0;
+                
                 // wait for reset pulse timer
                 timer_t reset_timer = timer_get();
                 while( (timer_get() - reset_timer) < ms_to_timer(RESET_PULSE_DURATION_MS) );
                                
                 // now wait for user to release ctrl-amiga-amiga
-                // and then reset ourself as well
-                if( (CTRL) && (LEFT_AMIGA) && (RIGHT_AMIGA) )
-                    RESET();
+                while( (!CTRL) && (!LEFT_AMIGA) && (!RIGHT_AMIGA) );
+                
+                // Now reset ourself as well.
+                RESET();
             }               
         }
         else
@@ -224,11 +228,11 @@ void main(void)
             // power-up synchronization achieved
             case POWERUP_SYNCED:
                 // send "ïnitiate power-up key stream" code
-                if(!keyboard_send(0xFD))
+                if(!keyboard_send(POWERUP_KEY_STREAM))
                     state = POWERUP;
                  
                 //send "terminate key stream" code
-                if(!keyboard_send(0xFE))
+                if(!keyboard_send(TERMINATE_KEY_STREAM))
                     state = POWERUP;
                 
                 //turn off CAPS LED
@@ -292,7 +296,7 @@ void main(void)
                 if(keyboard_synchronize())
                 {
                     // we are synchronized again, send "lost sync" code
-                    if(keyboard_send(0xF9))
+                    if(keyboard_send(LOST_SYNC))
                     {
                         // resend garbled code
                         if(keyboard_send(key_code))

@@ -21,6 +21,13 @@
 #ifndef KEYBOARD_H
 #define	KEYBOARD_H
 
+// special keyboard codes
+#define POWERUP_KEY_STREAM      0xFD
+#define TERMINATE_KEY_STREAM    0xFE
+#define LOST_SYNC               0xF9
+
+
+
 bool keyboard_send(uint8_t code);
 bool keyboard_synchronize(void);
 
