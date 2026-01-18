@@ -163,7 +163,7 @@ void main(void)
     timer_t matrix_timer;
     timer_t reset_debounce_timer;
     uint8_t key_code;
-    uint8_t  n_events = 0; 
+    uint8_t n_events = 0;
     
     enum state_t
     {
@@ -259,7 +259,13 @@ void main(void)
                         {
                             state = SEND;
                         }
-                    }                               
+                    }     
+#ifndef NDEBUG
+                    else
+                    {
+                        printf("ghosting!\n");
+                    }
+#endif
                 }                  
                 break;
                 

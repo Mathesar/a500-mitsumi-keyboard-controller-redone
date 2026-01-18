@@ -155,7 +155,6 @@ uint8_t matrix_handle_caps_lock(void)
 bool matrix_scan(void)
 {
     uint8_t row, columns;
-    uint8_t possible_ghost_columns = 0;
     
     // scan keyboard matrix
     for(row = 0; row < MATRIX_N_ROWS-1; row++)
@@ -174,17 +173,6 @@ bool matrix_scan(void)
         
         // deselect row
         matrix_deselect_row(row);
-        
-        // check for ghosting
-        if(matrix_count_bits_set(columns) >= 2)
-        {
-            if(columns & possible_ghost_columns)
-            {
-                //ghosting detected!
-                return false;
-            }                            
-            possible_ghost_columns |= columns;           
-        }
 
         // store result for this row
         matrix[row] = columns;
@@ -210,6 +198,30 @@ bool matrix_scan(void)
     if(RIGHT_AMIGA == 0)
         columns |= 0x40;
     matrix[row] = columns;    
+    
+    //check for ghosting
+    for(row = 0; row < MATRIX_N_ROWS-1; row++)
+    {
+        // if there is any row with more than 1 column set
+        // and these columns overlap with a colum in any 
+        // other row we have ghosting
+        columns = matrix[row];
+        if( matrix_count_bits_set(columns) > 1 )
+        {
+            // >1 column set, check against other rows
+            for(uint8_t x = 0; x < MATRIX_N_ROWS-1; x++)
+            {                
+                if(x != row)
+                {
+                    if(columns & matrix[x])
+                    {
+                        // overlap! ghosting detected
+                        return false;
+                    }                       
+                }
+            }    
+        }        
+    }
     
     //scan OK
     return true;
