@@ -30,12 +30,8 @@ bool keyboard_wait_handshake(void)
     us_timer_set(KEYBOARD_HANDSHAKE_TIMEOUT_MS*1000UL);    
 
     // check for KDAT released
-    while(!KDAT_READ)
-    {
-        if(us_timer_expired())
-            return false;   // KDAT is stuck low
-    }
-    
+    while(!KDAT_READ);
+     
     // now check for handshake pulse
     while(KDAT_READ)
     {
@@ -73,12 +69,7 @@ bool keyboard_synchronize(void)
 bool keyboard_send(uint8_t code)
 {
     // check for KDAT released
-    us_timer_set(KEYBOARD_HANDSHAKE_TIMEOUT_MS*1000);    
-    while(!KDAT_READ)
-    {
-        if(us_timer_expired())
-            return false;   // KDAT is stuck low
-    }
+    while(!KDAT_READ);
     
     // original Mitsumi keyboard sends a short pulse on
     // KDAT which doesn't seem necessary. We do it as well.   

@@ -230,9 +230,6 @@ uint8_t matrix_decode(void)
         uint8_t pressed  =  matrix[row] & ~key_state.key_current_states[row];
         uint8_t released = ~matrix[row] &  key_state.key_current_states[row];
         
-        // update states
-        key_state.key_current_states[row] ^= (pressed|released);
-
         // go through all columns   
         uint8_t column_mask = 1;
         for(uint8_t column=0; column<MATRIX_N_COLS; column++)
@@ -261,6 +258,9 @@ uint8_t matrix_decode(void)
                 printf("[%u,%u] UP\n", row, column);
 #endif
             }
+            
+            // update states
+            key_state.key_current_states[row] ^= column_mask&(pressed|released);
             
             // next column
             column_mask <<= 1;

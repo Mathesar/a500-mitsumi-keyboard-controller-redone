@@ -29,8 +29,8 @@
 #pragma config BORV = 1         // Brown Out Reset Voltage bits ()
 
 // CONFIG2H
-#pragma config WDT = OFF        // Watchdog Timer Enable bit (WDT disabled (control is placed on the SWDTEN bit))
-#pragma config WDTPS = 32768    // Watchdog Timer Postscale Select bits (1:32768)
+#pragma config WDT = ON         // Watchdog Timer Enable bit (WDT disabled (control is placed on the SWDTEN bit))
+#pragma config WDTPS = 256      // Watchdog Timer Postscale Select bits (1:32768)
 
 // CONFIG3H
 #pragma config CCP2MX = PORTC   // CCP2 MUX bit (CCP2 input/output is multiplexed with RC1)
@@ -172,7 +172,10 @@ void main(void)
         START_SCAN,
         SCAN,
         SEND,
-        OUT_OF_SYNC
+        OUT_OF_SYNC,
+        RESET_HOST,
+        RESET_HOST_WAIT_PULSE,
+        RESET_HOST_WAIT_RELEASE
     };
     
     enum state_t state = POWERUP;
@@ -192,21 +195,7 @@ void main(void)
         {
             if( (timer_get() - reset_debounce_timer) > ms_to_timer(RESET_DEBOUNCE_TIME_MS) )
             {
-                // assert reset to host computer                
-                HOST_RESET = 0;
-                
-                // turn on CAPS-LOCK LED
-                CAPS_LOCK = 0;
-                
-                // wait for reset pulse timer
-                timer_t reset_timer = timer_get();
-                while( (timer_get() - reset_timer) < ms_to_timer(RESET_PULSE_DURATION_MS) );
-                               
-                // now wait for user to release ctrl-amiga-amiga
-                while( (!CTRL) && (!LEFT_AMIGA) && (!RIGHT_AMIGA) );
-                
-                // Now reset ourself as well.
-                RESET();
+                state = RESET_HOST;
             }               
         }
         else
@@ -217,7 +206,7 @@ void main(void)
         // main state machine
         switch(state)
         {
-            // We come here after a reset
+            // We come here after a reset.
             case POWERUP:
                 // send sync pulse and wait for host to respond      
                 if(keyboard_synchronize())
@@ -225,17 +214,17 @@ void main(void)
                 
                 break;
                 
-            // power-up synchronization achieved
+            // Power-up synchronization achieved.
             case POWERUP_SYNCED:
                 // send "ïnitiate power-up key stream" code
                 if(!keyboard_send(POWERUP_KEY_STREAM))
                     state = POWERUP;
                  
-                //send "terminate key stream" code
+                // send "terminate key stream" code
                 if(!keyboard_send(TERMINATE_KEY_STREAM))
                     state = POWERUP;
                 
-                //turn off CAPS LED
+                // turn off CAPS-LOCK LED
                 CAPS_LOCK = 1;
                 
                 // we are now ready to scan the keyboard matrix
@@ -243,7 +232,7 @@ void main(void)
                                 
                 break;  
 
-            // start scanning
+            // Start scanning.
             case START_SCAN:
                 // init scan timer
                 matrix_timer = timer_get();
@@ -255,11 +244,11 @@ void main(void)
                 
                 break;
                 
-            // scan matrix
+            // Scan matrix.
             case SCAN:
                 if( (timer_get() - matrix_timer) > ms_to_timer(MATRIX_SCAN_INTERVAL_MS) )
                 {
-                    matrix_timer = timer_get();
+                    matrix_timer += ms_to_timer(MATRIX_SCAN_INTERVAL_MS);
                     
                     // scan keyboard
                     if(matrix_scan())
@@ -274,7 +263,7 @@ void main(void)
                 }                  
                 break;
                 
-            // send received key codes to host    
+            // Send received key codes to host.    
             case SEND:                             
                 if(n_events)
                 {
@@ -286,11 +275,10 @@ void main(void)
                 {
                     // all key events sent
                     state = SCAN;
-                }
-                    
+                }                    
                 break;
 
-            // we are out of sync with the host computer               
+            // We are out of sync with the host computer.           
             case OUT_OF_SYNC:                
                 // send sync pulse and wait for host to respond                
                 if(keyboard_synchronize())
@@ -301,17 +289,53 @@ void main(void)
                         // resend garbled code
                         if(keyboard_send(key_code))
                         {
-                            state = SEND;
+                            state = START_SCAN;
                         }
                     }                     
                 }               
+                break;
+                
+            // Reset requested.
+            case RESET_HOST:                
+                // assert reset to host computer                
+                HOST_RESET = 0;
+                
+                // turn on CAPS-LOCK LED
+                CAPS_LOCK = 0;
+                
+                // set reset pulse timer
+                timer_t reset_timer = timer_get();
+                
+                state = RESET_HOST_WAIT_PULSE;
+                
+                break;
+            
+            // Wait for reset pulse to finish.
+            case RESET_HOST_WAIT_PULSE:                
+                if( (timer_get() - reset_timer) < ms_to_timer(RESET_PULSE_DURATION_MS) )
+                {
+                    state = RESET_HOST_WAIT_RELEASE;
+                }
+                break;
+                                        
+            // Wait for user to release ctrl-amiga-amiga.   
+            case RESET_HOST_WAIT_RELEASE:      
+                if( CTRL || LEFT_AMIGA || RIGHT_AMIGA )
+                {
+                    // Now reset ourself as well.
+                    // This will also release the host reset.
+                    RESET();
+                }         
                 break;
                 
             // We should never, ever come here.
             default:    
                 RESET();                
                 break;
-         }     
+        }     
+        
+        // clear watchdog
+        CLRWDT();        
     }
 
     // And here too.

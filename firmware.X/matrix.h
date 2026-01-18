@@ -32,7 +32,7 @@
 #define MATRIX_N_COLS   7
 
 // max number of codes that can be detected in a single matrix scan
-#define MATRIX_N_EVENTS 32
+#define MATRIX_N_EVENTS 16
 
 // decoded key events are stored here
 extern uint8_t key_codes[MATRIX_N_EVENTS];
