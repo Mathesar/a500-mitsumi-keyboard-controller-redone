@@ -6,8 +6,8 @@
 	(paper "A4")
 	(title_block
 		(title "Mitsumi PCB A-500 Redone")
-		(date "2026-01-01")
-		(rev "1.0")
+		(date "2026-01-21")
+		(rev "1.1")
 		(company "Dennis van Weeren")
 	)
 	(lib_symbols
@@ -9664,7 +9664,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm"
+		(property "Footprint" "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm"
 			(at 158.4452 124.46 0)
 			(effects
 				(font
