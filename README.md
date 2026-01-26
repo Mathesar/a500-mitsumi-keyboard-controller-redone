@@ -4,11 +4,11 @@ This is a remake ("redone") of the Amiga 500 Mitsumi keyboard conntroller.
 
 ![alt text](pictures\Mitsumi-A-500-REDONE.jpg)
 
-The original Amiga 500 uses a MOS 6570 microcontroller that is no longer produced and getting exceedingly rare. They are also starting to fail causing the dreaded blinking CAPS-LOCK issue. Since there is no open-source / open-hardware replacement design available I decided to make my own.
+The original Amiga 500 uses a MOS 6570 microcontroller that is no longer produced and getting exceedingly rare. They are also starting to fail, resulting the dreaded "blinking CAPS-LOCK" issue. Since there is no open-source / open-hardware replacement design available I decided to make my own.
 
 This is a completely new "from scratch" design that uses a Microchip [PIC18F4520](https://www.microchip.com/en-us/product/pic18f4520) microcontroller. I chose this type as it is available in a DIP40 package so easy to solder by hand. It also gives this new redone keyboard controller a look very similar to the original controller. 
 
-Lastly, what I like about the PIC18F4520 is that it is an 8bit microcontroller with modest capabilities in the same spirit as the MOS 6570. It would bother me a bit to use a 50MHz+ 32bit ARM processor that is magnitudes faster than the Amiga's 68000 CPU just to scan a keyboard.
+Lastly, what I like about the PIC18F4520 is that it is an 8bit microcontroller with modest capabilities not unlike the MOS 6570. It would bother me a bit to use a 50MHz+ 32bit ARM processor that is magnitudes faster than the Amiga's 68000 CPU just to scan a keyboard.
 
 ## Features
 
@@ -35,7 +35,7 @@ The drive LED can be tuned by simply changing resistor R12. Higher values lower 
 
 ### Power LED
 
-The power LED is a bit special. One cannot simply change the value of R8. This is because of the power LED "DIM" function on later revisions of the Amiga 500. To work effectively, R8 must always be 22 Ohms. To solve this, the circuit around Q1 has been added. This circuit is a voltage "multiplier" that makes the parallel connected LEDS look like a single LED with a voltage drop similar to the original series connected Commodore LED. To make the LEDs less bright, this voltage drop must be increased (so the voltage drop over R8 is decreased, hence the current is decreased). This can be done by increasing the value of R10.
+The power LED is a bit special. One cannot simply change the value of R8. This is because of the power LED "DIM" function on later revisions of the Amiga 500. Dor this dim function to work correctly, R8 must always be 22 Ohms. To solve this, the circuit around Q1 has been added. This circuit is a voltage "multiplier" that makes the parallel connected LEDS look like a single LED with a voltage drop similar to the original series connected Commodore LED. To make the LEDs less bright, this voltage drop must be increased (so the voltage drop over R8 is decreased, hence current and brightness are also decreased). This can be done by increasing the value of R10.
 
 ## Firmware and programming
 
