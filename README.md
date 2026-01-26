@@ -2,7 +2,7 @@
 
 This is a remake ("redone") of the Amiga 500 Mitsumi keyboard conntroller.
 
-![alt text](pictures\Mitsumi-A-500-REDONE.jpg)
+![alt text](pictures/Mitsumi-A-500-REDONE.jpg)
 
 The original Amiga 500 uses a MOS 6570 microcontroller that is no longer produced and getting exceedingly rare. They are also starting to fail, resulting the dreaded "blinking CAPS-LOCK" issue. Since there is no open-source / open-hardware replacement design available I decided to make my own.
 
