@@ -23,6 +23,8 @@
 #include <stdbool.h>
 
 #define KEYBOARD_HANDSHAKE_TIMEOUT_MS   143UL
+#define KEYBOARD_SERIAL_TIME_STEP_US    20
+#define WAIT_KDAT_HIGH()                {while(!KDAT_READ);}
 
 // wait for host computer handshake
 bool keyboard_wait_handshake(void)
@@ -30,7 +32,7 @@ bool keyboard_wait_handshake(void)
     us_timer_set(KEYBOARD_HANDSHAKE_TIMEOUT_MS*1000UL);    
 
     // check for KDAT released
-    while(!KDAT_READ);
+    WAIT_KDAT_HIGH();
      
     // now check for handshake pulse
     while(KDAT_READ)
@@ -69,11 +71,11 @@ bool keyboard_synchronize(void)
 bool keyboard_send(uint8_t code)
 {
     // check for KDAT released
-    while(!KDAT_READ);
+    WAIT_KDAT_HIGH();
     
     // original Mitsumi keyboard sends a short pulse on
     // KDAT which doesn't seem necessary. We do it as well.   
-    us_timer_set(20)
+    us_timer_set(KEYBOARD_SERIAL_TIME_STEP_US-5);
     KDAT_WRITE = 0;
     us_timer_wait();  
     us_timer_set(100);
@@ -90,17 +92,17 @@ bool keyboard_send(uint8_t code)
     do
     {
         us_timer_wait();
-        us_timer_set(20);
+        us_timer_set(KEYBOARD_SERIAL_TIME_STEP_US-2);
         if(tx_code&0x80)
             KDAT_WRITE = 1;
         if(!(tx_code&0x80))
             KDAT_WRITE = 0;
         tx_code <<= 1;
         us_timer_wait();
-        us_timer_set(20);
+        us_timer_set(KEYBOARD_SERIAL_TIME_STEP_US-5);   
         KCLK = 0;
         us_timer_wait();
-        us_timer_set(20);
+        us_timer_set(KEYBOARD_SERIAL_TIME_STEP_US-7)
         KCLK = 1;
     }
     while(--count);      
