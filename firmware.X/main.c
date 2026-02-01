@@ -160,10 +160,10 @@ void init(void)
 
 void main(void) 
 {
-    timer_t matrix_timer;
     timer_t reset_debounce_timer;
     uint8_t key_code;
     uint8_t n_events = 0;
+    uint8_t row;
     
     enum state_t
     {
@@ -234,8 +234,8 @@ void main(void)
 
             // Start scanning.
             case START_SCAN:
-                // init scan timer
-                matrix_timer = timer_get();
+                // start with row #0
+                row = 0;
                 
                 if(n_events)
                     state = SEND;
@@ -246,27 +246,30 @@ void main(void)
                 
             // Scan matrix.
             case SCAN:
-                if( (timer_get() - matrix_timer) > ms_to_timer(MATRIX_SCAN_INTERVAL_MS) )
+                
+                // scan single row
+                matrix_scan_row(row++);
+                
+                // last row scanned?
+                if(row >= MATRIX_N_ROWS)
                 {
-                    matrix_timer += ms_to_timer(MATRIX_SCAN_INTERVAL_MS);
+                    row = 0;
                     
-                    // scan keyboard
-                    if(matrix_scan())
-                    {
-                        // extract key codes
-                        n_events = matrix_decode();
-                        if(n_events)
-                        {
-                            state = SEND;
-                        }
-                    }     
-#ifndef NDEBUG
-                    else
-                    {
-                        printf("ghosting!\n");
-                    }
+#ifdef NDEBUG
+                    DEBUG = 1;
 #endif
-                }                  
+
+                    // extract key codes
+                    n_events = matrix_decode();
+                    if(n_events)
+                    {
+                        state = SEND;
+                    }
+                    
+#ifdef NDEBUG
+                    DEBUG = 0;
+#endif
+                }                
                 break;
                 
             // Send received key codes to host.    

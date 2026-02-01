@@ -25,13 +25,14 @@
 // key state structure
 typedef struct
 {
-    uint8_t key_current_states[MATRIX_N_ROWS]; 
+    uint8_t key_current_states[MATRIX_N_ROWS];
+    uint8_t matrix_previous[MATRIX_N_ROWS];
+    bool caps_lock_state;
 } key_state_t;
 
 key_state_t key_state;
 uint8_t matrix[MATRIX_N_ROWS];
 uint8_t key_codes[MATRIX_N_EVENTS];
-bool caps_lock = false;
 
 // matrix to key code mapping
 const uint8_t matrix_to_code_map[MATRIX_N_ROWS][MATRIX_N_COLS] = 
@@ -133,33 +134,63 @@ uint8_t matrix_count_bits_set(uint8_t value)
 // returns correct key code
 uint8_t matrix_handle_caps_lock(void)
 {
-    if(caps_lock)
+    if(key_state.caps_lock_state)
     {
         // turn caps lock off
-        caps_lock = false;
+        key_state.caps_lock_state = false;
         CAPS_LOCK = 1;
         return CAPS_LOCK_CODE | 0x80;
     }
     else
     {
         // turn caps lock on
-        caps_lock = true;
+        key_state.caps_lock_state = true;
         CAPS_LOCK = 0;
         return CAPS_LOCK_CODE;
     }     
 }
 
-//Scan the matrix and place the scanned matrix in global <matrix>.
-//Returns true if OK.
-//Returns false if ghosting detected, result is then invalid.
-bool matrix_scan(void)
-{
-    uint8_t row, columns;
-    
-    // scan keyboard matrix
-    for(row = 0; row < MATRIX_N_ROWS-1; row++)
+// check for ghosting
+bool matrix_check_ghosting(void)
+{    
+    for(uint8_t row = 0; row < MATRIX_N_ROWS-1; row++)
     {
-        // select row
+        // if there is any row with more than 1 column set
+        // and these columns overlap with a colum in any 
+        // other row we have ghosting
+        uint8_t columns = matrix[row];        
+        if( matrix_count_bits_set(columns) > 1 )
+        {
+            // >1 column set, check against other rows
+            for(uint8_t x = 0; x < MATRIX_N_ROWS-1; x++)
+            {                
+                if(x != row)
+                {
+                    if(columns & matrix[x])
+                    {
+#ifndef NDEBUG
+                        printf("ghosting!\n");
+#endif
+                        // overlap! ghosting detected
+                        return true;
+                    }                       
+                }
+            }    
+        }        
+    }
+    
+    // no ghosting
+    return false;
+}
+
+//Scan a <row> of the matrix and place the scanned matrix in global <matrix>.
+void matrix_scan_row(uint8_t row)
+{
+    uint8_t columns;
+    
+    if(row < MATRIX_N_ROWS-1)
+    {
+        // scan regular matrix row
         matrix_select_row(row);
         
         // allow 160us for row to settle
@@ -180,52 +211,27 @@ bool matrix_scan(void)
         // wait for timer to expire before scanning next row     
         us_timer_wait();
     }
-    
-    // scan special keys and put them in the extra row
-    columns = 0;
-    if(LEFT_AMIGA == 0)
-        columns |= 0x01;
-    if(LEFT_ALT == 0)
-        columns |= 0x02;
-    if(LEFT_SHIFT == 0)
-        columns |= 0x04;
-    if(CTRL == 0)
-        columns |= 0x08;
-    if(RIGHT_ALT == 0)
-        columns |= 0x10;
-    if(RIGHT_SHIFT == 0)
-        columns |= 0x20;
-    if(RIGHT_AMIGA == 0)
-        columns |= 0x40;
-    matrix[row] = columns;    
-    
-    //check for ghosting
-    for(row = 0; row < MATRIX_N_ROWS-1; row++)
+    else
     {
-        // if there is any row with more than 1 column set
-        // and these columns overlap with a colum in any 
-        // other row we have ghosting
-        columns = matrix[row];
-        if( matrix_count_bits_set(columns) > 1 )
-        {
-            // >1 column set, check against other rows
-            for(uint8_t x = 0; x < MATRIX_N_ROWS-1; x++)
-            {                
-                if(x != row)
-                {
-                    if(columns & matrix[x])
-                    {
-                        // overlap! ghosting detected
-                        return false;
-                    }                       
-                }
-            }    
-        }        
+        // scan special keys and put them in the extra row
+        columns = 0;
+        if(LEFT_AMIGA == 0)
+            columns |= 0x01;
+        if(LEFT_ALT == 0)
+            columns |= 0x02;
+        if(LEFT_SHIFT == 0)
+            columns |= 0x04;
+        if(CTRL == 0)
+            columns |= 0x08;
+        if(RIGHT_ALT == 0)
+            columns |= 0x10;
+        if(RIGHT_SHIFT == 0)
+            columns |= 0x20;
+        if(RIGHT_AMIGA == 0)
+            columns |= 0x40;
+        matrix[row] = columns;    
     }
-    
-    //scan OK
-    return true;
-}
+ }
 
 // takes the scanned matrix in global <matrix> and scans for 
 // key pressed / released events
@@ -234,13 +240,22 @@ bool matrix_scan(void)
 uint8_t matrix_decode(void)
 { 
     uint8_t n = 0;
+    
+    // if matrix is ghosting
+    // do not decode matrix
+    if(matrix_check_ghosting())
+        return 0;
 
     // go through all rows
     for(uint8_t row=0; row<MATRIX_N_ROWS; row++)
     {
+        // debounce logic
+        uint8_t debounced_row = matrix[row] | key_state.matrix_previous[row];
+        key_state.matrix_previous[row] = matrix[row];
+                
         // check for pressed or released events
-        uint8_t pressed  =  matrix[row] & ~key_state.key_current_states[row];
-        uint8_t released = ~matrix[row] &  key_state.key_current_states[row];
+        uint8_t pressed  =  debounced_row & ~key_state.key_current_states[row];
+        uint8_t released = ~debounced_row &  key_state.key_current_states[row];
         
         // go through all columns   
         uint8_t column_mask = 1;

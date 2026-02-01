@@ -37,7 +37,7 @@
 // decoded key events are stored here
 extern uint8_t key_codes[MATRIX_N_EVENTS];
 
-bool matrix_scan(void);
+void matrix_scan_row(uint8_t row);
 uint8_t matrix_decode(void);
 
 #endif	/* MATRIX_H */
