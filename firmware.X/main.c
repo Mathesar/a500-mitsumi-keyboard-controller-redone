@@ -81,7 +81,6 @@
 #include "matrix.h"
 #include "keyboard.h"
 
-#define MATRIX_SCAN_INTERVAL_MS     11
 #define RESET_DEBOUNCE_TIME_MS      50
 #define RESET_PULSE_DURATION_MS     500
 
@@ -151,19 +150,20 @@ void init(void)
     LATE = 0x00;
     TRISE = 0x07;
     
-    // configure timer0 in 16bit mode, 128 micro-second per count
-    T0CON = 0b10000111;
+    // configure timer0 in 16bit mode, 16 micro-seconds per count
+    T0CON = 0b10000100;
     
-    //configure timer1 in 16bit mode, 4 micro-second per count
+    //configure timer1 in 16bit mode, 4 micro-seconds per count
     T1CON = 0b10110001;
 }
 
 void main(void) 
 {
-    timer_t reset_debounce_timer;
+    timer_t reset_debounce_timer, reset_timer;
     uint8_t key_code;
     uint8_t n_events = 0;
     uint8_t row;
+    bool    ctrl_amiga_amiga_detected = false;
     
     enum state_t
     {
@@ -190,12 +190,14 @@ void main(void)
     // main loop
     while(1)       
     {
-        // check for ctrl-amiga-amiga reset outside main state machine
-        if( (!CTRL) && (!LEFT_AMIGA) && (!RIGHT_AMIGA) )
+        // Check for ctrl-amiga-amiga reset outside main state machine,
+        // set state directly to RESET_HOST if so.
+        if( (!CTRL) && (!LEFT_AMIGA) && (!RIGHT_AMIGA) && (!ctrl_amiga_amiga_detected))
         {
             if( (timer_get() - reset_debounce_timer) > ms_to_timer(RESET_DEBOUNCE_TIME_MS) )
             {
                 state = RESET_HOST;
+                ctrl_amiga_amiga_detected = true;
             }               
         }
         else
@@ -306,14 +308,17 @@ void main(void)
                 
             // Reset requested.
             case RESET_HOST:                
-                // assert reset to host computer                
+                // assert reset to host computer (A500)               
                 HOST_RESET = 0;
+                
+                // assert reset to host computer (big box)       
+                KCLK = 0;
                 
                 // turn on CAPS-LOCK LED
                 CAPS_LOCK = 0;
                 
                 // set reset pulse timer
-                timer_t reset_timer = timer_get();
+                reset_timer = timer_get();
                 
                 state = RESET_HOST_WAIT_PULSE;
                 
@@ -321,7 +326,7 @@ void main(void)
             
             // Wait for reset pulse to finish.
             case RESET_HOST_WAIT_PULSE:                
-                if( (timer_get() - reset_timer) < ms_to_timer(RESET_PULSE_DURATION_MS) )
+                if( (timer_get() - reset_timer) > ms_to_timer(RESET_PULSE_DURATION_MS) )
                 {
                     state = RESET_HOST_WAIT_RELEASE;
                 }
