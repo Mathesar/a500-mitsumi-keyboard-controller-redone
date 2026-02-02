@@ -31,13 +31,7 @@
 // total number of columns in scan result
 #define MATRIX_N_COLS   7
 
-// max number of codes that can be detected in a single matrix scan
-#define MATRIX_N_EVENTS 16
-
-// decoded key events are stored here
-extern uint8_t key_codes[MATRIX_N_EVENTS];
-
-void matrix_scan_row(uint8_t row);
-uint8_t matrix_decode(void);
+void matrix_scan(void);
+void matrix_decode(void);
 
 #endif	/* MATRIX_H */

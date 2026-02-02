@@ -21,15 +21,20 @@
 #ifndef KEYBOARD_H
 #define	KEYBOARD_H
 
+#include <stdint.h>
+#include <stdbool.h>
+
 // special keyboard codes
-#define POWERUP_KEY_STREAM      0xFD
-#define TERMINATE_KEY_STREAM    0xFE
-#define LOST_SYNC               0xF9
-
-
+#define LOST_SYNC                   0xF9
+#define KEYBOARD_BUFFER_OVERFLOW    0xFA
+#define POWERUP_KEY_STREAM          0xFD
+#define TERMINATE_KEY_STREAM        0xFE
+#define KEYBOARD_BUFFER_EMPTY       0xFF
 
 bool keyboard_send(uint8_t code);
 bool keyboard_synchronize(void);
+void keyboard_put_buffer(uint8_t code);
+uint8_t keyboard_get_buffer(void);
 
 #endif	/* KEYBOARD_H */
 

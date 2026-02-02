@@ -18,21 +18,20 @@
  *  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "matrix.h"
-#include "main.h"
 #include <xc.h>
+#include "matrix.h"
+#include "keyboard.h"
+#include "main.h"
 
 // key state structure
-typedef struct
+struct
 {
     uint8_t key_current_states[MATRIX_N_ROWS];
     uint8_t matrix_previous[MATRIX_N_ROWS];
     bool caps_lock_state;
-} key_state_t;
+} key_state;
 
-key_state_t key_state;
 uint8_t matrix[MATRIX_N_ROWS];
-uint8_t key_codes[MATRIX_N_EVENTS];
 
 // matrix to key code mapping
 const uint8_t matrix_to_code_map[MATRIX_N_ROWS][MATRIX_N_COLS] = 
@@ -183,68 +182,64 @@ bool matrix_check_ghosting(void)
     return false;
 }
 
-//Scan a <row> of the matrix and place the scanned matrix in global <matrix>.
-void matrix_scan_row(uint8_t row)
+// Scan the matrix and place the scanned matrix in global <matrix>.
+void matrix_scan(void)
 {
-    uint8_t columns;
-    
-    if(row < MATRIX_N_ROWS-1)
+    uint8_t row, columns;
+   
+    for(row=0; row<MATRIX_N_ROWS-1; row++)
     {
         // scan regular matrix row
         matrix_select_row(row);
         
-        // allow 160us for row to settle
-        us_timer_set(160);
+        // allow 40us for row to settle
+        us_timer_set(40);
         us_timer_wait();
-        // scan a row every 400us
-        us_timer_set(240);
 
         // read pressed keys for this row
         columns = matrix_read_columns();   
         
         // deselect row
         matrix_deselect_row(row);
+        
+        // allow 160us for row to clear
+        us_timer_set(160);
+        us_timer_wait();
 
         // store result for this row
         matrix[row] = columns;
-        
-        // wait for timer to expire before scanning next row     
-        us_timer_wait();
     }
-    else
-    {
-        // scan special keys and put them in the extra row
-        columns = 0;
-        if(LEFT_AMIGA == 0)
-            columns |= 0x01;
-        if(LEFT_ALT == 0)
-            columns |= 0x02;
-        if(LEFT_SHIFT == 0)
-            columns |= 0x04;
-        if(CTRL == 0)
-            columns |= 0x08;
-        if(RIGHT_ALT == 0)
-            columns |= 0x10;
-        if(RIGHT_SHIFT == 0)
-            columns |= 0x20;
-        if(RIGHT_AMIGA == 0)
-            columns |= 0x40;
-        matrix[row] = columns;    
-    }
- }
+    
+    // scan special keys and put them in the extra row
+    columns = 0;
+    if(LEFT_AMIGA == 0)
+        columns |= 0x01;
+    if(LEFT_ALT == 0)
+        columns |= 0x02;
+    if(LEFT_SHIFT == 0)
+        columns |= 0x04;
+    if(CTRL == 0)
+        columns |= 0x08;
+    if(RIGHT_ALT == 0)
+        columns |= 0x10;
+    if(RIGHT_SHIFT == 0)
+        columns |= 0x20;
+    if(RIGHT_AMIGA == 0)
+        columns |= 0x40;
+    matrix[row] = columns;    
+}
 
-// takes the scanned matrix in global <matrix> and scans for 
-// key pressed / released events
-// store events as key codes in global <keycodes>
-// returns the number of decoded key events
-uint8_t matrix_decode(void)
+// Takes the scanned matrix in global <matrix>, checks for ghosting,
+// performs debouncing and scans for key pressed / released events.
+// Events are pushed into the keyboard buffer.
+void matrix_decode(void)
 { 
     uint8_t n = 0;
     
     // if matrix is ghosting
     // do not decode matrix
     if(matrix_check_ghosting())
-        return 0;
+        return;
 
     // go through all rows
     for(uint8_t row=0; row<MATRIX_N_ROWS; row++)
@@ -257,47 +252,44 @@ uint8_t matrix_decode(void)
         uint8_t pressed  =  debounced_row & ~key_state.key_current_states[row];
         uint8_t released = ~debounced_row &  key_state.key_current_states[row];
         
-        // go through all columns   
-        uint8_t column_mask = 1;
-        for(uint8_t column=0; column<MATRIX_N_COLS; column++)
-        {              
-            uint8_t code = matrix_to_code_map[row][column];
-            
-            if(code == CAPS_LOCK_CODE)
-            {
-                // CAPS-LOCK is special, toggles on "pressed" events
+        // update states
+        key_state.key_current_states[row] ^= pressed | released;
+
+        if(pressed || released)
+        {
+            // go through all columns   
+            uint8_t column_mask = 1;
+            for(uint8_t column=0; column<MATRIX_N_COLS; column++)
+            {                         
+                uint8_t code = matrix_to_code_map[row][column];
+                    
                 if(pressed&column_mask)
                 {
-                    key_codes[n++] = matrix_handle_caps_lock();
-                }               
-            }
-            else if(pressed&column_mask)
-            {            
-                key_codes[n++] = code;
+                    if(code == CAPS_LOCK_CODE)
+                    {
+                        // CAPS-LOCK is special, toggles on "pressed" events
+                        code =  matrix_handle_caps_lock();
+                    }
+
+                    keyboard_put_buffer(code);
 #ifndef NDEBUG
-                printf("[%u,%u] DOWN, CODE:0x%02X\n", row, column, matrix_to_code_map[row][column]);
+                    printf("[%u,%u] DOWN, CODE:0x%02X\n", row, column, matrix_to_code_map[row][column]);
 #endif
-            }
-            else if(released&column_mask)
-            {            
-                key_codes[n++] = code | 0x80;     
+                }
+                else if(released&column_mask)
+                {            
+                    if(code != CAPS_LOCK_CODE)
+                    {
+                        keyboard_put_buffer(code|0x80);     
+                    }
 #ifndef NDEBUG
-                printf("[%u,%u] UP\n", row, column);
+                    printf("[%u,%u] UP\n", row, column);
 #endif
-            }
-            
-            // update states
-            key_state.key_current_states[row] ^= column_mask&(pressed|released);
-            
-            // next column
-            column_mask <<= 1;
-            
-            // check for buffer full
-            if(n >= MATRIX_N_EVENTS)
-                return MATRIX_N_EVENTS;
-        }    
-    }
-        
-    // return number of key pressed/released events detected
-    return n;
+                }
+
+                // next column
+                column_mask <<= 1;
+            }    
+        }
+    } 
 }

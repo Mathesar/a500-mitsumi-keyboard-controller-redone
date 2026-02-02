@@ -81,6 +81,7 @@
 #include "matrix.h"
 #include "keyboard.h"
 
+#define MATRIX_SCAN_INTERVAL_MS     10
 #define RESET_DEBOUNCE_TIME_MS      50
 #define RESET_PULSE_DURATION_MS     500
 
@@ -159,10 +160,8 @@ void init(void)
 
 void main(void) 
 {
-    timer_t reset_debounce_timer, reset_timer;
+    timer_t reset_debounce_timer, reset_timer, scan_timer;
     uint8_t key_code;
-    uint8_t n_events = 0;
-    uint8_t row;
     bool    ctrl_amiga_amiga_detected = false;
     
     enum state_t
@@ -171,7 +170,6 @@ void main(void)
         POWERUP_SYNCED,
         START_SCAN,
         SCAN,
-        SEND,
         OUT_OF_SYNC,
         RESET_HOST,
         RESET_HOST_WAIT_PULSE,
@@ -236,59 +234,42 @@ void main(void)
 
             // Start scanning.
             case START_SCAN:
-                // start with row #0
-                row = 0;
+                // reset timer
+                scan_timer = timer_get();
                 
-                if(n_events)
-                    state = SEND;
-                else
-                    state = SCAN;
+                state = SCAN;
                 
                 break;
                 
             // Scan matrix.
             case SCAN:
-                
-                // scan single row
-                matrix_scan_row(row++);
-                
-                // last row scanned?
-                if(row >= MATRIX_N_ROWS)
+                if( (timer_get() - scan_timer) > ms_to_timer(MATRIX_SCAN_INTERVAL_MS) )
                 {
-                    row = 0;
-                    
+                    scan_timer = timer_get();
 #ifdef NDEBUG
                     DEBUG = 1;
 #endif
-
-                    // extract key codes
-                    n_events = matrix_decode();
-                    if(n_events)
-                    {
-                        state = SEND;
-                    }
+                    // scan matrix
+                    matrix_scan();                   
                     
+                    // extract key codes
+                    matrix_decode();
 #ifdef NDEBUG
                     DEBUG = 0;
 #endif
-                }                
-                break;
+                }       
                 
-            // Send received key codes to host.    
-            case SEND:                             
-                if(n_events)
+                // send keycodes
+                key_code = keyboard_get_buffer();
+                if(key_code != KEYBOARD_BUFFER_EMPTY)
                 {
-                    key_code = key_codes[--n_events];
                     if(!keyboard_send(key_code))
-                        state = OUT_OF_SYNC;    
-                }     
-                else
-                {
-                    // all key events sent
-                    state = SCAN;
-                }                    
+                    {
+                        state = OUT_OF_SYNC;  
+                    }
+                }
                 break;
-
+             
             // We are out of sync with the host computer.           
             case OUT_OF_SYNC:                
                 // send sync pulse and wait for host to respond                
