@@ -67,10 +67,9 @@
 #define us_timer_expired()          (PIR1bits.TMR1IF)
 #define us_timer_wait()             {while(!PIR1bits.TMR1IF);}
 
-// shared timer macro's, resolution = 16us, max = ~1s
+// shared timer macro's, resolution = 128us
 #define timer_get()                 (TMR0)
-#define ms_to_timer(ms)             (((uint32_t)ms*1000UL)/16UL)
-#define us_to_timer(us)             (((uint32_t)us+15UL)/16UL)
+#define ms_to_timer(ms)             (((uint32_t)ms*1000UL)/128UL)
 typedef uint16_t timer_t;
 
 #endif	/* MAIN_H */

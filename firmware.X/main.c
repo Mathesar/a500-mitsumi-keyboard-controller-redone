@@ -151,8 +151,8 @@ void init(void)
     LATE = 0x00;
     TRISE = 0x07;
     
-    // configure timer0 in 16bit mode, 16 micro-seconds per count
-    T0CON = 0b10000100;
+    // configure timer0 in 16bit mode, 128 micro-seconds per count
+    T0CON = 0b10000111;
     
     //configure timer1 in 16bit mode, 4 micro-seconds per count
     T1CON = 0b10110001;
@@ -250,7 +250,7 @@ void main(void)
                     DEBUG = 1;
 #endif
                     // scan matrix
-                    matrix_scan();                   
+                    matrix_scan();                  
                     
                     // extract key codes
                     matrix_decode();

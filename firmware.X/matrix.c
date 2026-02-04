@@ -26,7 +26,7 @@
 // key state structure
 struct
 {
-    uint8_t key_current_states[MATRIX_N_ROWS];
+    uint8_t key_states[MATRIX_N_ROWS];
     uint8_t matrix_previous[MATRIX_N_ROWS];
     bool caps_lock_state;
 } key_state;
@@ -243,21 +243,23 @@ void matrix_decode(void)
 
     // go through all rows
     for(uint8_t row=0; row<MATRIX_N_ROWS; row++)
-    {
-        // debounce logic
-        uint8_t debounced_row = matrix[row] | key_state.matrix_previous[row];
-        key_state.matrix_previous[row] = matrix[row];
-                
-        // check for pressed or released events
-        uint8_t pressed  =  debounced_row & ~key_state.key_current_states[row];
-        uint8_t released = ~debounced_row &  key_state.key_current_states[row];
+    {               
+        uint8_t current = matrix[row];
+        uint8_t previous = key_state.matrix_previous[row];
+        key_state.matrix_previous[row] = current;        
+        uint8_t state = key_state.key_states[row];
         
-        // update states
-        key_state.key_current_states[row] ^= pressed | released;
-
-        if(pressed || released)
+        // for proper debouncing, keys must be pressed or released for 
+        // at least 2 consecutive scans in order to be registered
+        uint8_t pressed  =  (current & previous) & ~state;
+        uint8_t released = ~(current | previous) &  state;     
+ 
+        if(pressed|released)
         {
-            // go through all columns   
+            // event(s) detected, update key states
+            key_state.key_states[row] ^= pressed | released;
+
+            // go through all columns
             uint8_t column_mask = 1;
             for(uint8_t column=0; column<MATRIX_N_COLS; column++)
             {                         
@@ -270,10 +272,10 @@ void matrix_decode(void)
                         // CAPS-LOCK is special, toggles on "pressed" events
                         code =  matrix_handle_caps_lock();
                     }
-
+                    
                     keyboard_put_buffer(code);
 #ifndef NDEBUG
-                    printf("[%u,%u] DOWN, CODE:0x%02X\n", row, column, matrix_to_code_map[row][column]);
+                    printf("[%u,%u] DOWN, CODE:0x%02X\n", row, column, code);
 #endif
                 }
                 else if(released&column_mask)
@@ -281,10 +283,10 @@ void matrix_decode(void)
                     if(code != CAPS_LOCK_CODE)
                     {
                         keyboard_put_buffer(code|0x80);     
-                    }
 #ifndef NDEBUG
-                    printf("[%u,%u] UP\n", row, column);
+                        printf("[%u,%u] UP, CODE:0x%02X\n", row, column, code);
 #endif
+                    }
                 }
 
                 // next column
