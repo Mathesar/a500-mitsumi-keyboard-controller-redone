@@ -4,7 +4,7 @@ This is a remake ("redone") of the Amiga 500 Mitsumi keyboard conntroller.
 
 ![alt text](pictures/Mitsumi-A-500-REDONE.jpg)
 
-The original Amiga 500 uses a MOS 6570 microcontroller that is no longer produced and getting exceedingly rare. They are also starting to fail, resulting the dreaded "blinking CAPS-LOCK" issue. Since there is no open-source / open-hardware replacement design available I decided to make my own.
+The original Amiga 500 uses a MOS 6570 microcontroller that is no longer produced and getting exceedingly rare. They are also starting to fail, resulting in the dreaded "blinking CAPS-LOCK" issue. Since there is no open-source / open-hardware replacement design available I decided to make my own.
 
 This is a completely new "from scratch" design that uses a Microchip [PIC18F4520](https://www.microchip.com/en-us/product/pic18f4520) microcontroller. I chose this type as it is available in a DIP40 package so easy to solder by hand. It also gives this new redone keyboard controller a look very similar to the original controller. 
 
@@ -12,17 +12,17 @@ Lastly, what I like about the PIC18F4520 is that it is an 8bit microcontroller w
 
 ## Features
 
-* Completely independent design
+* Completely independent design.
 * Fully compatible with the original Mitsumi keyboard controller.
-* Cost effective 2-layer circuit board.
+* Debouncing filter.
+* Anti-ghosting filter.
 * Through-hole design using currently available components for a retro look.
 * Uses three 5mm x 2mm x 7mm LEDs instead of the unobtanium Commodore 15mm LED.
 * Optionally, a 3D printed lightpipe can be used to give a cleaner LED look.
-* Anti-ghosting algorithm.
 
 ## Molex ZIF connector
 
-The original keyboard controller uses a Molex right angle ZIF connector to connect to the keyboard matrix membrane. This connector is very hard (impossible?) to get. I therefore used the straight version of this connector, the [Molex 39-53-2315](https://www.molex.com/en-us/products/part-detail/39532315). This connector is soldered on the edge of the circuitboard. This causes the entry point of the connector to sit lower than the original. This puts some strain on the flat cable. One should thus take care when assembling.
+The original keyboard controller uses a Molex right angle ZIF connector to connect to the keyboard matrix membrane. This connector is very hard (impossible?) to get. I therefore used the straight version of this connector, the [Molex 39-53-2315](https://www.molex.com/en-us/products/part-detail/39532315). This connector is soldered on the edge of the circuitboard. This causes the entry point of the connector to sit lower than the original. This puts some strain on the flat cable and one should thus take care when assembling the keyboard.
 
 ## LED brightness tuning
 
@@ -41,13 +41,11 @@ The power LED is a bit special. One cannot simply change the value of R8. This i
 
 The firmware was developed using [MPLAB X ide v6.25](https://www.microchip.com/en-us/tools-resources/develop/mplab-x-ide).
 The code is written in C for the [XC8 compiler](https://www.microchip.com/en-us/tools-resources/develop/mplab-xc-compilers/xc8).
-
 These tools are freely available from [Microchip](https://www.microchip.com).
 
 ## Licenses
 
 The hardware is licensed under [CERN OHL-S V2.0](https://cern-ohl.web.cern.ch/).
-
 The firmware is licensed under [GNU GPL V3](https://www.gnu.org/licenses/gpl-3.0.en.html).
 
 ## Acknowledgements
