@@ -5,3 +5,4 @@
 /firmware.X/build/
 /firmware.X/debug/
 *.kicad_sch.lck
+*.FCBak
