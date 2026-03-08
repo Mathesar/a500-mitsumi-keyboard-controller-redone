@@ -36,7 +36,7 @@ The drive LEDs can be tuned by simply changing resistor R12. Higher values lower
 
 ### Power LED
 
-The power LEDs are a bit special. One cannot simply use a larger than original current limiting resistor. This is because of the power LED "DIM" function on later revisions of the Amiga 500. Simply using a larger current limiting resistor would make the dimming hardly noticeable causing the power LEDs to always shine at seemingly full brightness.
+The power LEDs are a bit special. One cannot simply use a larger than original current limiting resistor. This is because of the power LED dimming function on later revisions of the Amiga 500. Simply using a larger current limiting resistor would make the dimming hardly noticeable causing the power LEDs to always shine at seemingly full brightness.
 
 To solve this, the circuit around Q1/Q2 has been added. This circuit detects when the LEDs should be dimmed or not. If the Amiga turns the LEDs on (full brightness on later revisions), only Q2 will conduct and deliver current to the LEDs via both R10 and R11. When the Amiga turns the LEDs off (dimmed on later revisions), only Q1 will conduct and current to the LEDs is only delivered via R10. The power LEDs will be dimmed.
 
@@ -45,12 +45,13 @@ In order to reduce or increase the brightness both resistors should thus be chan
 
 ## Building
 
-The board is a completely through-hole design and should thus be easy to build. To connect the keyboard controller to the main board a 300mm 8pin DuPont cable assembly can be used.
+The board is a completely through-hole design and should thus be easy to build. 
+The BOM contains some partnumbers for the resistors but one can use any brand. None of the components are critical.
 
 For the LEDs one can use 3 5mm x 2mm LEDs. These are still available. The top of these LEDs should sit above 12.3mm above the PCB. 
 Alternatively, 3mm ("flat top") LEDs can be used combined with a 3D printed light guide. I had mine printed by JLC3DP using the 8001 "translucent" resin. The LEDs should be soldered close to the PCB to make this fit. Be aware though that the 8001 resin is not UV resistant on the long term. However, so far my light guides are holding up well.
 
-The pinheader for the cable to the mainboard has 10 pins instead of 8. The extra pins are "auxiliary" pins meant for future expansions and not currently implemented. Therefore connect the keyboard cable only to pins 1..8 as indicated by the arrow.
+To connect the keyboard controller to the main board a 300mm 8pin DuPont cable assembly can be used. The pinheader for this cable has 10 pins instead of 8. The extra pins are "auxiliary" pins meant for future expansions and not currently implemented. Therefore connect the keyboard cable only to pins 1..8 as indicated by the arrow.
 
 ## Firmware and programming
 
