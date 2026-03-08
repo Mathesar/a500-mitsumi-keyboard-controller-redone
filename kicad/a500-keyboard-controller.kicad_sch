@@ -12425,7 +12425,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "MF0207FTE52-22R"
+		(property "MPN" "MF0207FTE52-390R"
 			(at 121.92 166.37 90)
 			(effects
 				(font
@@ -12595,7 +12595,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "MF0207FTE52-270R"
+		(property "MPN" "MF0207FTE52-470R"
 			(at 86.36 166.37 90)
 			(effects
 				(font
@@ -12765,7 +12765,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "MF0207FTE52-470R"
+		(property "MPN" "MF0207FTE52-10K"
 			(at 121.92 153.67 90)
 			(effects
 				(font
@@ -13102,7 +13102,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "MF0207FTE52-1K8"
+		(property "MPN" "MF0207FTE52-6K8"
 			(at 132.08 166.37 90)
 			(effects
 				(font
